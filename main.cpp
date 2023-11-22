@@ -1,4 +1,6 @@
 #include <Novice.h>
+#include "Mymath.h"
+#include "ImGuiManager.h"
 
 const char kWindowTitle[] = "LE2B_10_kusama";
 
@@ -24,6 +26,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+		Vector3 axis = Normalize({ 1.0f,1.0f,1.0f });
+
+		float angle = 0.44f;
+
+		Matrix4x4 rotateMatrix = MakeRotateAxisAngle(axis, angle);
 
 		///
 		/// ↑更新処理ここまで
@@ -32,6 +39,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+		ImGui::Begin("rotateMatrix");
+		ImGui::Text(" %1.3f %1.3f %1.3f %1.3f", rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3]);
+		ImGui::Text(" %1.3f %1.3f %1.3f %1.3f", rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3]);
+		ImGui::Text(" %1.3f %1.3f %1.3f %1.3f", rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3]);
+		ImGui::Text(" %1.3f %1.3f %1.3f %1.3f", rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
+		
+		ImGui::End();
 
 		///
 		/// ↑描画処理ここまで
