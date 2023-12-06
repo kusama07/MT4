@@ -120,5 +120,6 @@
     <ClInclude Include="Mymath.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="Quaternion.h" />
   </ItemGroup>
 </Project>

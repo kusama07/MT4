@@ -1,5 +1,14 @@
 #include "Mymath.h"
 
+Vector3 Multiply(const float& v1, const Vector3& v2)
+{
+	Vector3 result{};
+	result.x = v1 * v2.x;
+	result.y = v1 * v2.y;
+	result.z = v1 * v2.z;
+	return result;
+}
+
 Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle)
 {
 	Matrix4x4 result;
@@ -116,6 +125,94 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to)
 	result.m[3][1] = 0.0f;
 	result.m[3][2] = 0.0f;
 	result.m[3][3] = 1.0f;
+
+	return result;
+}
+
+Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
+{
+	Quaternion result;
+
+	Vector3 qV = { lhs.x,lhs.y,lhs.z };
+
+	Vector3 rV = { rhs.x,rhs.y,rhs.z };
+
+	float dot = Dot(qV, rV);
+
+	Vector3 cross = Cross(qV, rV);
+
+	result.x = cross.x + lhs.w * rhs.x + lhs.x * rhs.w;
+	result.y = cross.y + lhs.w * rhs.y + lhs.y * rhs.w;
+	result.z = cross.z + lhs.w * rhs.z + lhs.z * rhs.w;
+
+	result.w = (lhs.w * rhs.w) - dot;
+
+	return result;
+}
+
+Quaternion IdentityQuaternion()
+{
+	Quaternion result;
+
+	result = { 0.0f,0.0f,0.0f,1.0f };
+
+	return result;
+}
+
+Quaternion Conjugate(const Quaternion& quaternion)
+{
+	Quaternion result;
+
+	result.x = quaternion.x * -1;
+	result.y = quaternion.y * -1;
+	result.z = quaternion.z * -1;
+	result.w = quaternion.w;
+
+	return result;
+}
+
+float Norm(const Quaternion& quaternion)
+{
+	float result;
+
+	result =
+		sqrt((quaternion.w * quaternion.w) +
+			(quaternion.x * quaternion.x) +
+			(quaternion.y * quaternion.y) +
+			(quaternion.z * quaternion.z));
+
+	return result;
+}
+
+Quaternion Normalize(const Quaternion& quaternion)
+{
+	Quaternion result{};
+
+	float date = sqrtf(quaternion.x * quaternion.x + quaternion.y * quaternion.y + quaternion.z * quaternion.z + quaternion.w * quaternion.w);
+	if (date != 0) {
+		result.x = quaternion.x / date;
+		result.y = quaternion.y / date;
+		result.z = quaternion.z / date;
+		result.w = quaternion.w / date;
+	}
+	return result;
+}
+
+Quaternion Inverse(const Quaternion& quaternion)
+{
+	Quaternion result;
+
+	float norm = Norm(quaternion);
+
+	Quaternion conjugate = Conjugate(quaternion);
+
+	float normSquad = norm * norm;
+
+	result.x = conjugate.x / normSquad;
+	result.y = conjugate.y / normSquad;
+	result.z = conjugate.z / normSquad;
+	result.w = conjugate.w / normSquad;
+
 
 	return result;
 }
