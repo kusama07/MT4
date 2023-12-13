@@ -217,3 +217,80 @@ Quaternion Inverse(const Quaternion& quaternion)
 	return result;
 }
 
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle)
+{
+	Quaternion result;
+
+	result.x = axis.x * std::sin(angle / 2);
+	result.y = axis.y * std::sin(angle / 2);
+	result.z = axis.z * std::sin(angle / 2);
+	result.w = std::cos(angle / 2);
+
+
+	return result;
+}
+
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion)
+{
+	Vector3 result;
+
+	Quaternion r = { vector.x,vector.y,vector.z,0 };
+
+	Quaternion q = quaternion;
+
+	Quaternion conjugate = Conjugate(q);
+
+	Quaternion multiply = Multiply(q, Multiply(r, conjugate));
+
+	result.x = multiply.x;
+	result.y = multiply.y;
+	result.z = multiply.z;
+
+	return result;
+}
+
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
+{
+	Matrix4x4 result;
+
+	result.m[0][0] = (quaternion.w * quaternion.w) + (quaternion.x * quaternion.x) - (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[0][1] = 2 * ((quaternion.x * quaternion.y) + (quaternion.w * quaternion.z));
+	result.m[0][2] = 2 * ((quaternion.x * quaternion.z) - (quaternion.w * quaternion.y));
+	result.m[0][3] = 0;
+
+	result.m[1][0] = 2 * ((quaternion.x * quaternion.y) - (quaternion.w * quaternion.z));
+	result.m[1][1] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) + (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[1][2] = 2 * ((quaternion.y * quaternion.z) + (quaternion.w * quaternion.x));;
+	result.m[1][3] = 0;
+
+	result.m[2][0] = 2 * ((quaternion.x * quaternion.z) + (quaternion.w * quaternion.y));
+	result.m[2][1] = 2 * ((quaternion.y * quaternion.z) - (quaternion.w * quaternion.x));
+	result.m[2][2] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) - (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z);
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
+	return result;
+}
+
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
+{
+
+	Vector3 result;
+
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+
+	return result;
+
+}
+
